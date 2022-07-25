@@ -14,7 +14,6 @@ export const useRegister = (credentials, store, router, dis) => {
       console.log(response);
 
       store.dispatch("setLoading", false);
-      dis.$toast.success(response.data.data.message);
       dis.$toast.success("Registration Successful");
 
       router.push("/");

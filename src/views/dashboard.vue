@@ -1,13 +1,20 @@
 <!-- eslint-disable -->
 <template>
   <div class="flex h-screen">
+    <button
+      @click="toggle"
+      class="toggle-menu absolute right-5 top-8 place-content-center text-black font-bold text-xl bg-[#fff] w-8 h-8 p-5 rounded-full"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
     <div
-      class="w-[400px] h-screen flex flex-col justify-between bg-white py-10"
+      :class="[isMobile ? 'isOpen' : null, 'sidebar']"
+      class="sidebar transform duration-500 md:w-[300px] w-[280px] z-10 h-screen md:flex flex-col justify-between bg-white py-10"
     >
       <div>
         <div class="flex flex-col px-10 items-center space-y-2">
           <div
-            class="grid place-content-center text-white font-bold text-xl bg-[#0192ED] p-8 rounded-full"
+            class="grid place-content-center uppercase text-white font-bold text-xl bg-[#0192ED] p-8 rounded-full"
           >
             {{ currentUserData.first_name.charAt(0)
             }}{{ currentUserData.last_name.charAt(0) }}
@@ -18,7 +25,7 @@
           </h2>
         </div>
         <div class="mt-10 px-5 space-y-2">
-          <router-link
+          <div
             v-for="(item, idx) in sideLinks"
             :key="idx"
             :to="item.link"
@@ -33,7 +40,7 @@
               <i :class="`${item.icon} text-base`"></i
             ></span>
             <div class="w-10/12">{{ item.name }}</div>
-          </router-link>
+          </div>
         </div>
       </div>
       <div
@@ -46,74 +53,8 @@
         <div class="w-10/12">Logout</div>
       </div>
     </div>
-    <div class="w-full overflow-y-auto bg-[#E5E5E5] py-10 px-4">
-      <h1 class="font-bold">Dashboard</h1>
-      <div class="mt-5">
-        <div class="grid grid-cols-2 items-stretch gap-4">
-          <div class="card text-white flex flex-col justify-between">
-            <div class="space-y-1 text-2xl">
-              <div>Account Details</div>
-              <div>7359583211</div>
-              <div>WEMA BANK</div>
-            </div>
-
-            <div class="space-y-1 text-2xl">
-              <div>Wallet Balance</div>
-              <div>₦50,000</div>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div
-              class="flex flex-col space-y-1 p-4 rounded-md tranform hover:-translate-y-2 duration-300 shadow-sm bg-white"
-            >
-              <div
-                class="grid place-content-center w-10 h-10 text-white bg-[#0192ED] p-4 rounded-full"
-              >
-                <i class="fa fa-paper-plane" aria-hidden="true"></i>
-              </div>
-              <h2 class="font-medium text-lg">Send</h2>
-              <h6 class="text-xs font-medium">
-                Send Money to any bank at low rate
-              </h6>
-            </div>
-            <div
-              class="flex flex-col space-y-1 p-4 rounded-md tranform hover:-translate-y-2 duration-300 shadow-sm bg-white"
-            >
-              <div
-                class="grid place-content-center w-10 h-10 text-white bg-[#0192ED] p-4 rounded-full"
-              >
-                <i class="fa-solid fa-download"></i>
-              </div>
-              <h2 class="font-medium text-lg">Receive</h2>
-              <h6 class="text-xs font-medium">
-                Send Money to any bank at low rate
-              </h6>
-            </div>
-            <div
-              class="flex flex-col space-y-1 p-4 rounded-md tranform hover:-translate-y-2 duration-300 shadow-sm bg-white"
-            >
-              <div
-                class="grid place-content-center w-10 h-10 text-white bg-[#0192ED] p-4 rounded-full"
-              >
-                <i class="fa-solid fa-clock-rotate-left"></i>
-              </div>
-              <h2 class="font-medium text-lg">History</h2>
-              <h6 class="text-xs font-medium">Check your trasaction history</h6>
-            </div>
-            <div
-              class="flex flex-col space-y-1 p-4 rounded-md tranform hover:-translate-y-2 duration-300 shadow-sm bg-white"
-            >
-              <div
-                class="grid place-content-center w-10 h-10 text-white bg-[#0192ED] p-4 rounded-full"
-              >
-                <i class="fa fa-file" aria-hidden="true"></i>
-              </div>
-              <h2 class="font-medium text-lg">Payroll</h2>
-              <h6 class="text-xs font-medium">Manage your payroll</h6>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="main h-screen">
+      <DashboardComp />
     </div>
   </div>
 </template>
@@ -148,26 +89,34 @@ const sideBarContent = [
   },
 ];
 import { mapGetters } from "vuex";
+import DashboardComp from "../components/DashboardComp.vue";
 export default {
   name: "admin",
   data() {
     return {
       sideLinks: sideBarContent,
+      isMobile: false,
     };
   },
   computed: {
     currentPath() {
       return this.$route.path;
     },
+    checkMobile() {
+      return this.isMobile;
+    },
     ...mapGetters(["currentUserData"]),
   },
-
   methods: {
     logout() {
       this.$store.dispatch("logout");
       this.$router.push("/");
     },
+    toggle() {
+      this.isMobile = !this.isMobile;
+    },
   },
+  components: { DashboardComp },
 };
 </script>
 <!-- eslint-disable -->
@@ -181,5 +130,37 @@ export default {
   display: flex;
   align-items: start;
   padding: 2rem;
+}
+
+.toggle-menu {
+  display: none;
+}
+.sidebar {
+  position: fixed;
+  min-width: 300px;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+.main {
+  margin-left: 300px;
+  width: 100%;
+}
+@media screen and (max-width: 640px) {
+  .toggle-menu {
+    display: grid;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .sidebar {
+    left: -100vw;
+    transition: all 0.2s linear;
+  }
+  .sidebar.isOpen {
+    left: 0;
+  }
 }
 </style>

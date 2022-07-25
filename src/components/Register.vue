@@ -29,7 +29,7 @@
           </h2>
           <small>Provide the following details to create an account </small>
 
-          <div class="my-4 grid grid-cols-2 gap-6">
+          <div class="my-4 grid md:grid-cols-2  gap-6">
             <div>
               <label>First Name</label>
               <div class="rounded flex border">
