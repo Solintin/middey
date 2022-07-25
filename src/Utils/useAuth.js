@@ -15,6 +15,8 @@ export const useRegister = (credentials, store, router, dis) => {
 
       store.dispatch("setLoading", false);
       dis.$toast.success(response.data.data.message);
+      dis.$toast.success("Registration Successful");
+
       router.push("/");
     })
     .catch((error) => {
@@ -40,7 +42,7 @@ export const useLogin = (credentials, store, router, dis) => {
           console.log(response.data.data);
           store.dispatch("setLoading", false);
           store.dispatch("setUseData", response.data.data);
-          dis.$toast.success("Login Succesful");
+          dis.$toast.success("Login Successful");
           router.push("/dashboard");
         });
     })
