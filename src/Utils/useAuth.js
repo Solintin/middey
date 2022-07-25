@@ -1,31 +1,25 @@
 /* eslint-disable  */
 import axios from "@/Utils/axios.config.js";
-import Cookies from "js-cookie";
 
 export const useRegister = (credentials, store, router, dis) => {
   store.dispatch("setLoading", true);
   axios
-    .post("/users/", credentials)
+    .post("/users/", credentials, {
+      headers: {
+        authorization:
+          "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsb2NhbGhvc3QiLCJpYXQiOjE2NTcxOTcxNTksImV4cCI6MTY3Mjk3NzE1OSwidXNlciI6eyJJRCI6MSwidXNlcm5hbWUiOiJCcnVpeiIsInVzZXJfZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJmaXJzdF9uYW1lIjoiQWRleWVtaSIsImxhc3RfbmFtZSI6IkF5b21pIiwicm9sZXMiOlsiYWRtaW5pc3RyYXRvciJdfX0.4mOg8AWJHBqKzsikPJcTilJcJOILh6keqh1MQUgJWWg",
+      },
+    })
     .then((response) => {
-      console.log(response)
+      console.log(response);
 
-      Cookies.set("token", response.data.token);
-      // store.dispatch("setNewUser", response.data);
-      // store.dispatch("setLoading", false);
-      // dis.$toast.success("Registration Successful");
-
-      // const { user_type } = response.data;
-      // if (user_type === "Admin") {
-      //   router.push("/admin/overview");
-      // } else {
-      //   router.push("/calculator");
-      // }
+      store.dispatch("setLoading", false);
+      dis.$toast.success(response.data.data.message);
+      router.push("/");
     })
     .catch((error) => {
       store.dispatch("setLoading", false);
-      dis.$toast.error(JSON.stringify(error.response.data));
-
-      console.log(error);
+      dis.$toast.error(JSON.stringify(error.response.data.message));
     });
 };
 
@@ -34,21 +28,25 @@ export const useLogin = (credentials, store, router, dis) => {
   axios
     .post("/users/login/", credentials)
     .then((response) => {
-      console.log(response)
-      // Cookies.set("token", response.data.token);
-      // store.dispatch("setUser", response.data);
-      // store.dispatch("setLoading", false);
-      // const { user_type } = response.data.user;
-      // if (user_type === "Admin") {
-      //   router.push("/admin/overview");
-      // } else {
-      //   router.push("/calculator");
-      // }
-      // dis.$toast.success("Login Successful");
+      console.log(response.data.data);
+      store.dispatch("setUser", response.data.data);
+      axios
+        .get(`/users/?user_id=${response.data.data.user_id}`, {
+          headers: {
+            authorization: `Bearer ${response.data.data.access_token}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          store.dispatch("setLoading", false);
+          store.dispatch("setUseData", response.data.data);
+          dis.$toast.success("Login Succesful");
+          router.push("/dashboard");
+        });
     })
     .catch((error) => {
       store.dispatch("setLoading", false);
-      dis.$toast.error(JSON.stringify(error.response.data));
+      dis.$toast.error(JSON.stringify(error.response.data.message));
 
       console.log(error);
     });

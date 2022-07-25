@@ -127,7 +127,11 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         //Login Logic
-        const credentials = { email: this.email, password: this.password };
+        const credentials = {
+          user_email: this.email,
+          user_password: this.password,
+          token_expiration: "persistent",
+        };
         useLogin(credentials, this.$store, this.$router, this);
       } else {
       }
