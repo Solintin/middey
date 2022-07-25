@@ -21,7 +21,7 @@ export const useRegister = (credentials, store, router, dis) => {
     })
     .catch((error) => {
       store.dispatch("setLoading", false);
-      dis.$toast.error(JSON.stringify(error.response.data.message));
+      dis.$toast.error("Registration Error");
     });
 };
 
@@ -48,7 +48,7 @@ export const useLogin = (credentials, store, router, dis) => {
     })
     .catch((error) => {
       store.dispatch("setLoading", false);
-      dis.$toast.error(JSON.stringify(error.response.data.message));
+      dis.$toast.error("Login failed");
 
       console.log(error);
     });
